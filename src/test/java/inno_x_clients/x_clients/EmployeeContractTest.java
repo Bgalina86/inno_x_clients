@@ -3,6 +3,7 @@ package inno_x_clients.x_clients;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 
+import inno_x_clients.constClass.Validationbody;
 import inno_x_clients.x_clients.helper.ConfProperties;
 import inno_x_clients.x_clients.helper.EmployeeApiHelper;
 import inno_x_clients.x_clients.model.AuthResponse;
@@ -24,6 +25,7 @@ public class EmployeeContractTest {
     EmployeeApiHelper employeeApiHelper;
     private static String username;
     private static String password;
+
 
 
     @BeforeAll
@@ -48,28 +50,9 @@ public class EmployeeContractTest {
 
     @Test
     @DisplayName("Добавить нового сотрудника")
-//curl -X 'POST' \
-//  'https://x-clients-be.onrender.com/employee' \
-//  -H 'accept: application/json' \
-//  -H 'x-client-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MjU2NTY1NzAsImV4cCI6MTcyNTY1NzQ3MH0.XnqbCbxmdcj83dfozgYjJ5xrGeGChB7FZOiaMsZ06V0' \
-//  -H 'Content-Type: application/json' \
-//  -d '{
-//  "id": 0,
-//  "firstName": "string",
-//  "lastName": "string",
-//  "middleName": "string",
-//  "companyId": 0,
-//  "email": "string",
-//  "url": "string",
-//  "phone": "string",
-//  "birthdate": "2024-09-06T21:03:25.986Z",
-//  "isActive": true
-//}'
     public void iCanAddNewUserCompany() {
         AuthResponse info = employeeApiHelper.auth(username, password);
-        CreateEmployeeReqest createEmployeeReqest = new CreateEmployeeReqest("Kolay", "Ivanov",
-            "Ivanovich", 581, "ddbgfb@mail.com", "privet.ru", "+7987884555", "2024-09-12T05:20:22.243Z", true
-        );
+        CreateEmployeeReqest createEmployeeReqest = inno_x_clients.constClass.Validationbody.body;
         RestAssured.given().basePath("employee")
             .body(createEmployeeReqest)
             .header("x-client-token", info.userToken())
@@ -82,6 +65,24 @@ public class EmployeeContractTest {
             .and()
             .body("id", is(greaterThan(0)));
     }
+@Test
+    @DisplayName("Получение сотрудника по id")
+    public void iCanGetUserCompany() {
+    AuthResponse info = employeeApiHelper.auth(username, password);
+    CreateEmployeeReqest createEmployeeReqest = Validationbody.body;
+    int id = RestAssured.given().basePath("employee")
+            .body(createEmployeeReqest)
+            .header("x-client-token", info.userToken())
+            .contentType(ContentType.JSON)
+            .when()
+            .post()
+            .body()
+            .jsonPath()
+            .getInt("id");
+    employeeApiHelper.printEmployeeIsCompony(id);
+
+
+}
 
 //    @ParameterizedTest
 //    @ArgumentsSource(AddNewUserCompany.class)

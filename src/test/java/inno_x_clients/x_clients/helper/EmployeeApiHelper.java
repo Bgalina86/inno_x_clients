@@ -29,7 +29,7 @@ public class EmployeeApiHelper {
         //  -H 'accept: application/json'
         given()
             .basePath("employee")
-            .queryParam("company", id)
+            .queryParam("id", id)
             .when()
             .get()
             .body().prettyPrint();
