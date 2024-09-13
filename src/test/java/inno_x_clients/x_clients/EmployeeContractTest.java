@@ -1,5 +1,6 @@
 package inno_x_clients.x_clients;
 
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 
@@ -7,7 +8,7 @@ import inno_x_clients.constClass.Validationbody;
 import inno_x_clients.x_clients.helper.ConfProperties;
 import inno_x_clients.x_clients.helper.EmployeeApiHelper;
 import inno_x_clients.x_clients.model.AuthResponse;
-import inno_x_clients.x_clients.model.CreateEmployeeReqest;
+import inno_x_clients.x_clients.model.PatchEmployeeReqest;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -52,9 +53,9 @@ public class EmployeeContractTest {
     @DisplayName("Добавить нового сотрудника")
     public void iCanAddNewUserCompany() {
         AuthResponse info = employeeApiHelper.auth(username, password);
-        CreateEmployeeReqest createEmployeeReqest = inno_x_clients.constClass.Validationbody.body;
-        RestAssured.given().basePath("employee")
-            .body(createEmployeeReqest)
+        PatchEmployeeReqest patchEmployeeReqest = inno_x_clients.constClass.Validationbody.body;
+        given().basePath("employee")
+            .body(patchEmployeeReqest)
             .header("x-client-token", info.userToken())
             .contentType(ContentType.JSON)
             .when()
@@ -69,9 +70,9 @@ public class EmployeeContractTest {
     @DisplayName("Получение сотрудника по id")
     public void iCanGetUserCompany() {
     AuthResponse info = employeeApiHelper.auth(username, password);
-    CreateEmployeeReqest createEmployeeReqest = Validationbody.body;
-    int id = RestAssured.given().basePath("employee")
-            .body(createEmployeeReqest)
+    PatchEmployeeReqest patchEmployeeReqest = Validationbody.body;
+    int idReqest = given().basePath("employee")
+            .body(patchEmployeeReqest)
             .header("x-client-token", info.userToken())
             .contentType(ContentType.JSON)
             .when()
@@ -79,7 +80,7 @@ public class EmployeeContractTest {
             .body()
             .jsonPath()
             .getInt("id");
-    employeeApiHelper.printEmployeeIsCompony(id);
+    employeeApiHelper.printEmployeeIsCompony(idReqest);
 
 
 }
@@ -88,7 +89,7 @@ public class EmployeeContractTest {
 //    @ArgumentsSource(AddNewUserCompany.class)
 //    public void iCanAddNewUserCompanyParameter(Employee createEmployeeReqest) {
 //        AuthResponse info = employeeApiHelper.auth(username, password);
-//        //CreateEmployeeReqest employeeReqest = new CreateEmployeeReqest(createEmployeeReqest);
+//        //PatchEmployeeReqest employeeReqest = new PatchEmployeeReqest(createEmployeeReqest);
 //        Response response = RestAssured.given()
 //            .basePath("employee")
 //            .body(createEmployeeReqest)
