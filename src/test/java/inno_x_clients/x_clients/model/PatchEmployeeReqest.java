@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record PatchEmployeeReqest(String firstName, String lastName, String middleName, int companyId, String EMAIL, String url, String phone,
+public record PatchEmployeeReqest(String firstName, String lastName, String middleName, int companyId, String email, String url, String phone,
                                   String birthdate, boolean isActive) {
 
 }

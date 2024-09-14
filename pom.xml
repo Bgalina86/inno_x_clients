@@ -92,6 +92,12 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/x
         <artifactId>javafaker</artifactId>
         <version>1.0.2</version>
     </dependency>
+    <dependency>
+        <groupId>com.atlassian.oai</groupId>
+        <artifactId>swagger-request-validator-restassured</artifactId>
+        <version>2.41.0</version>
+        <scope>test</scope>
+    </dependency>
 
 
 </dependencies>
