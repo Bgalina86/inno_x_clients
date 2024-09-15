@@ -1,6 +1,7 @@
 package inno_x_clients.x_clients.model;
 
 public class EmployeeConst {
+
     public String getFirstName() {
         return firstName;
     }
@@ -18,6 +19,7 @@ public class EmployeeConst {
     private String phone;
     private String birthdate;
     private boolean isActive;
+
     public int getCompanyId() {
         return companyId;
     }
@@ -25,9 +27,6 @@ public class EmployeeConst {
     public void setCompanyId(int companyId) {
         this.companyId = companyId;
     }
-
-
-
 
 
 }

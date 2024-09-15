@@ -11,6 +11,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
 public class CreateNewTaskDemo {
+
     private final static String URL = "https://todo-app-sky.herokuapp.com/";
 
     public static void main(String[] args) throws IOException {
@@ -18,18 +19,16 @@ public class CreateNewTaskDemo {
         HttpClient client = HttpClientBuilder.create().build();
 
         String json = """
-                {
-                 "title": "HTTP Client demo",
-                  "completed": false
-                }
-                """;
+            {
+             "title": "HTTP Client demo",
+              "completed": false
+            }
+            """;
         HttpEntity reqBody = new StringEntity(json, ContentType.APPLICATION_JSON);
-
 
         HttpPost createNewTaskRequest = new HttpPost(URL);
         createNewTaskRequest.setEntity(reqBody);
 //        createNewTaskRequest.addHeader("Content-Type", "application/json");
-
 
         HttpResponse createNewTaskResponse = client.execute(createNewTaskRequest);
 

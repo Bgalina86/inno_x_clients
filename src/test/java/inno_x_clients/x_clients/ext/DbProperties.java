@@ -4,11 +4,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-public class EnvProperties {
+public class DbProperties {
 
-    public static String getEnvProperties(String property) throws IOException {
-        String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
-        String appConfigPath = rootPath + "env.properties";
+    public static String getProperties(String property) throws IOException {
+        String appConfigPath = "src/test/resources/conf.properties";
 
         Properties properties = new Properties();
         properties.load(new FileInputStream(appConfigPath));

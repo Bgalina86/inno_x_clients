@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record CreateEmployeeReqest(String lastName, String email, String url, String phone, boolean isActive) {
+public record PatchEmployeeRequest(String lastName, String email, String url, String phone,
+                                  boolean isActive) {
 
 }

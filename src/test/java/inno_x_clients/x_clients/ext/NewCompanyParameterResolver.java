@@ -9,13 +9,16 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 
 
 public class NewCompanyParameterResolver implements ParameterResolver {
+
     @Override
-    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+    public boolean supportsParameter(ParameterContext parameterContext,
+        ExtensionContext extensionContext) throws ParameterResolutionException {
         return parameterContext.getParameter().getType().equals(CreateCompanyResponse.class);
     }
 
     @Override
-    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+    public Object resolveParameter(ParameterContext parameterContext,
+        ExtensionContext extensionContext) throws ParameterResolutionException {
         CompanyApiHelper helper = new CompanyApiHelper();
         return helper.createCompany("Temp company", "Компания, которая будет удалена");
     }

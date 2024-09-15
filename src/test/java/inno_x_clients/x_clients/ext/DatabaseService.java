@@ -20,20 +20,20 @@ public class DatabaseService {
     static final String SQL_DELETE_SPECIAL_COMPANY = "delete from company c where description ='Vasileva decription'";
     static final String SQL_GET_EMPLOYEE_INFO = "select e.id, e.first_name,e.last_name,e.middle_name,e.company_id,e.email, e.avatar_url, e.phone,e.birthdate,e.is_active from employee e where e.id  =?;";
     static final String SQL_GET_ANY_EMPLOYEE_ID = "select e.id from employee e limit  1;";
-    static final String SQL_ADD_NEW_EMPLOYEE="insert into employee (is_active, last_name, first_name, phone, company_id) values (true, 'VasilevaTest', 'Test', '79519778018', ?);";
-    static final String SQL_GET_SPECIAL_EMPLOYEE="select e.id from employee e where e.last_name ='VasilevaTest' order by e.id desc limit 1;";
+    static final String SQL_ADD_NEW_EMPLOYEE = "insert into employee (is_active, last_name, first_name, phone, company_id) values (true, 'VasilevaTest', 'Test', '79519778018', ?);";
+    static final String SQL_GET_SPECIAL_EMPLOYEE = "select e.id from employee e where e.last_name ='VasilevaTest' order by e.id desc limit 1;";
 
     public void connectToDb() throws SQLException, IOException {
 
-        connection = DriverManager.getConnection(EnvProperties.getEnvProperties("dbConnectionString"),
-                EnvProperties.getEnvProperties("dbUsername"),
-                EnvProperties.getEnvProperties("dbPassword"));
+        connection = DriverManager.getConnection(
+            DbProperties.getProperties("dbConnectionString"),
+            DbProperties.getProperties("dbUsername"),
+            DbProperties.getProperties("dbPassword"));
     }
 
     public int getAnyCompanyID() throws SQLException {
 
-        String sqlQuery = SQL_GET_ANY_COMPANY_ID;
-
+      String sqlQuery = SQL_GET_ANY_COMPANY_ID;
 
         ResultSet resultSet = connection.createStatement().executeQuery(sqlQuery);
         resultSet.next();

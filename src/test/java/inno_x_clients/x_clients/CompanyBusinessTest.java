@@ -25,7 +25,8 @@ public class CompanyBusinessTest {
     }
 
     @Test
-    public void iCanDeleteCompany(CompanyApiHelper helper, CreateCompanyResponse newCompany) throws InterruptedException {
+    public void iCanDeleteCompany(CompanyApiHelper helper, CreateCompanyResponse newCompany)
+        throws InterruptedException {
         helper.deleteCompany(newCompany.id());
         Optional<Company> optional = helper.getById(3376);
         assertFalse(optional.isPresent());

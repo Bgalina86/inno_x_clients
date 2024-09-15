@@ -1,67 +1,84 @@
-package inno_x_clients.x_clients.model;
+package inno_x_clients.x_clients;
 
+import static inno_x_clients.constClass.Const.HTTP_CODE_CREATE;
+import static inno_x_clients.constClass.Const.HTTP_CODE_OK;
+import static inno_x_clients.constClass.Const.HTTP_CODE_UNAUTHORIZED;
 import static inno_x_clients.x_clients.helper.EmployeeRandomeService.generateEmployee;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
 import com.github.javafaker.Faker;
 import inno_x_clients.x_clients.ext.DatabaseService;
-import inno_x_clients.x_clients.ext.EnvProperties;
-import inno_x_clients.x_clients.helper.CompanyApiHelper;
+import inno_x_clients.x_clients.helper.ConfProperties;
 import inno_x_clients.x_clients.helper.EmployeeApiHelper;
+import inno_x_clients.x_clients.model.AuthResponse;
+import inno_x_clients.x_clients.model.Employee;
+import inno_x_clients.x_clients.model.PatchEmployeeRequest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import java.io.IOException;
 import java.sql.SQLException;
 import jdk.jfr.Description;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+public class EmployeeContractTestBD {
 
-public class EmployeeContractTestBD<PatchEmployeeRequest> {
+    private  ConfProperties properties;
+    EmployeeApiHelper employeeApiHelper;
+    private  String dbUsername;
+    private  String dbPassword;
+    private  String username;
+    private  String password;
+    private  String headers;
+    private DatabaseService databaseService;
+    private int companyId;
+    private int employeeId;
 
-    static EmployeeApiHelper employeeHelper;
-    static CompanyApiHelper companyHelper;
-    static DatabaseService databaseService;
-    static int companyId;
-    static int employeeId;
+    @BeforeEach
+    public  void setUp() throws SQLException, IOException {
 
+        properties = new ConfProperties();
+        dbUsername = properties.getProperty("dbUsername");
+        dbPassword = properties.getProperty("dbPassword");
+        username = properties.getProperty("username");
+        password = properties.getProperty("password");
+        headers = properties.getProperty("headers");
 
-    @BeforeAll
-    public static void setUp() throws SQLException, IOException {
-        RestAssured.baseURI = EnvProperties.getEnvProperties("url");
+        RestAssured.baseURI = properties.getProperty("baseURI");
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
         databaseService = new DatabaseService();
         databaseService.connectToDb();
         companyId = databaseService.createNewCompany();
-        employeeId=databaseService.createNewEmployee(companyId);
-
-        companyHelper = new CompanyApiHelper();
-        employeeHelper = new EmployeeApiHelper();
+        employeeId = databaseService.createNewEmployee(companyId);
     }
 
-
-    @AfterAll
-    public static void tearDown() throws SQLException {
-        databaseService.deleteCompanyAndItsEmloyees(companyId);
+    @AfterEach
+    public  void tearDown() throws SQLException {
         databaseService.closeConnection();
     }
+
+    @Test
+    @Description("Тест на соединение с БД")
+    public void connectToDb() throws SQLException {
+        this.employeeId = databaseService.getAnyEmployeeId();
+    }
+
 
     @Test
     @Description("Получает список работников по существующему id компании")
     public void status200OnGetEmployeesByCompany() throws SQLException {
         int id = databaseService.getAnyCompanyID();
-
         given()
             .basePath("employee")
             .queryParam("company", id)
             .when()
             .get()
             .then()
-            .statusCode(200)
-            .header("Content-Type", "application/json; charset=utf-8");
+            .statusCode(HTTP_CODE_OK)
+            .header("Content-Type", headers);
     }
 
     @Test
@@ -74,8 +91,8 @@ public class EmployeeContractTestBD<PatchEmployeeRequest> {
             .when()
             .get()
             .then()
-            .statusCode(200)
-            .header("Content-Type", "application/json; charset=utf-8")
+            .statusCode(HTTP_CODE_OK)
+            .header("Content-Type", headers)
             .body(equalTo("[]"));
     }
 
@@ -89,8 +106,8 @@ public class EmployeeContractTestBD<PatchEmployeeRequest> {
             .when()
             .get("{Id}", id)
             .then()
-            .statusCode(200)
-            .header("Content-Type", "application/json; charset=utf-8");
+            .statusCode(HTTP_CODE_OK)
+            .header("Content-Type", headers);
 
     }
 
@@ -104,7 +121,7 @@ public class EmployeeContractTestBD<PatchEmployeeRequest> {
             .when()
             .get("{Id}", id + 1)
             .then()
-            .statusCode(200)
+            .statusCode(HTTP_CODE_OK)
             .header("Content-length", equalTo("0"));
     }
 
@@ -121,73 +138,71 @@ public class EmployeeContractTestBD<PatchEmployeeRequest> {
             .post()
             .then()
             .assertThat()
-            .statusCode(401);
+            .statusCode(HTTP_CODE_UNAUTHORIZED);
     }
 
     @Test
     @Description("Проверяем что можем создать сотрудника c токеном")
-    public void iCanAddNewEmployee() throws IOException {
+    public void iCanAddNewEmployee() {
 
-        AuthResponse info = employeeHelper.auth(EnvProperties.getEnvProperties("app_user.login"), EnvProperties.getEnvProperties("app_user.pass"));
+        AuthResponse authResponse = employeeApiHelper.auth(username, password);
         Faker faker = new Faker();
         Employee createEmployeeRequest = generateEmployee(faker, companyId);
         given()
             .basePath("employee")
             .body(createEmployeeRequest)
-            .header("x-client-token", info.userToken())
+            .header("x-client-token", authResponse.userToken())
             .contentType(ContentType.JSON)
             .when()
             .post()
             .then()
             .assertThat()
-            .statusCode(201);
+            .statusCode(HTTP_CODE_CREATE);
     }
 
     @Test
     @Description("Проверяем, что можем изменить информацию о сотруднике")
-    public void iCanEditEmployee() throws SQLException, IOException {
-        AuthResponse info = employeeHelper.auth(EnvProperties.getEnvProperties("app_user.login"), EnvProperties.getEnvProperties("app_user.pass"));
-        Faker faker = new Faker();
-        PatchEmployeeRequest patchEmployeeRequest = new PatchEmployeeRequest
-            (faker.name().lastName(),
-                faker.internet().emailAddress(),
-                faker.internet().url(),
-                faker.phoneNumber().cellPhone(),
-                faker.bool().bool());
+    public void iCanEditEmployee(){
+        AuthResponse authResponse = employeeApiHelper.auth(username, password);
+        PatchEmployeeRequest patchEmployeeRequest = fakerEmploee();
         given()
             .basePath("employee")
             .body(patchEmployeeRequest)
-            .header("x-client-token", info.userToken())
+            .header("x-client-token", authResponse.userToken())
             .contentType(ContentType.JSON)
             .when()
-            .patch("{id}",employeeId)
+            .patch("{id}", employeeId)
             .then()
             .assertThat()
-            .statusCode(200);
+            .statusCode(HTTP_CODE_OK);
     }
 
     @Test
     @Description("Проверяем, что при отправке запросы на изменение несуществующего сотрудника получаем 500")
-    public void iCannotEditEmployee() throws SQLException, IOException {
-        AuthResponse info = employeeHelper.auth(EnvProperties.getEnvProperties("app_user.login"), EnvProperties.getEnvProperties("app_user.pass"));
-        Faker faker = new Faker();
-        PatchEmployeeRequest patchEmployeeRequest = new PatchEmployeeRequest
-            (faker.name().lastName(),
-                faker.internet().emailAddress(),
-                faker.internet().url(),
-                faker.phoneNumber().phoneNumber(),
-                faker.bool().bool());
-
+    public void iCannotEditEmployee(){
+        AuthResponse authResponse = employeeApiHelper.auth(username, password);
+        PatchEmployeeRequest patchEmployeeRequest = fakerEmploee();
 
         given()
             .basePath("employee")
             .body(patchEmployeeRequest)
-            .header("x-client-token", info.userToken())
+
+            .header("x-client-token", authResponse.userToken())
             .contentType(ContentType.JSON)
             .when()
-            .patch("{id}",employeeId+1000)
+            .patch("{id}", employeeId + 1000)
             .then()
             .assertThat()
-            .statusCode(500);
+            .statusCode(HTTP_CODE_CREATE);
     }
+
+    public PatchEmployeeRequest fakerEmploee() {
+        Faker faker = new Faker();
+       return new PatchEmployeeRequest(faker.name().lastName(),
+           faker.internet().emailAddress(),
+           faker.internet().url(),
+           faker.phoneNumber().phoneNumber(),
+           faker.bool().bool());
+    }
+
 }

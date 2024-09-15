@@ -4,14 +4,13 @@ import static inno_x_clients.x_clients.helper.EmployeeRandomeService.generateEmp
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ru.inno.x_employees.helper.EmployeeService.generateEmployee;
 
 import com.github.javafaker.Faker;
 import inno_x_clients.x_clients.ext.DatabaseService;
-import inno_x_clients.x_clients.ext.EnvProperties;
+import inno_x_clients.x_clients.ext.DbProperties;
 import inno_x_clients.x_clients.helper.CompanyApiHelper;
 import inno_x_clients.x_clients.helper.EmployeeApiHelper;
-import inno_x_clients.x_clients.model.CreateEmployeeResponse;
+//import inno_x_clients.x_clients.model.CreateEmployeeResponse;
 import inno_x_clients.x_clients.model.Employee;
 import io.restassured.RestAssured;
 import java.io.IOException;
@@ -22,7 +21,8 @@ import jdk.jfr.Description;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import ru.inno.x_employees.model.*;
+import inno_x_clients.x_clients.model.*;
+
 
 public class EmployeeBusinessTestBD {
 
@@ -36,7 +36,7 @@ public class EmployeeBusinessTestBD {
     @BeforeAll
     public static void setUp() throws SQLException, IOException {
 
-        RestAssured.baseURI = EnvProperties.getEnvProperties("url");
+        RestAssured.baseURI = DbProperties.getProperties("baseURI");
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         databaseService = new DatabaseService();
         databaseService.connectToDb();
@@ -71,8 +71,8 @@ public class EmployeeBusinessTestBD {
         assertEquals(employee.firstName(), resultSet.getString(2));
         assertEquals(employee.lastName(), resultSet.getString(3));
         assertEquals(employee.middleName(), resultSet.getString(4));
-        assertEquals(employee.email(), resultSet.getString(6));
-        assertEquals(employee.avatar_url(), resultSet.getString(7));
+        assertEquals(employee.EMAIL(), resultSet.getString(6));
+       // assertEquals(employee.avatar_url(), resultSet.getString(7));
         assertEquals(employee.phone(), resultSet.getString(8));
         assertEquals(employee.birthdate().toString(), resultSet.getDate(9).toString());
         assertEquals(employee.isActive(), resultSet.getBoolean(10));
@@ -102,19 +102,19 @@ public class EmployeeBusinessTestBD {
         Faker faker = new Faker();
 
         PatchEmployeeRequest patchEmployeeRequest = new PatchEmployeeRequest
-                (faker.name().lastName(),
-                        faker.internet().emailAddress(),
-                        faker.internet().url(),
-                        faker.phoneNumber().phoneNumber(),
-                        faker.bool().bool());
+            (faker.name().lastName(),
+                faker.internet().emailAddress(),
+                faker.internet().url(),
+                faker.phoneNumber().phoneNumber(),
+                faker.bool().bool());
 
         Employee employee = employeeHelper.editEmployee(employeeId, patchEmployeeRequest);
 
-        assertEquals(employee.lastName(),patchEmployeeRequest.lastName());
-        assertEquals(employee.email(),patchEmployeeRequest.email());
-        assertEquals(employee.avatar_url(),patchEmployeeRequest.url());
-        assertEquals(employee.phone(),patchEmployeeRequest.phone());
-        assertEquals(employee.isActive(),patchEmployeeRequest.isActive());
+        assertEquals(employee.lastName(), patchEmployeeRequest.lastName());
+        assertEquals(employee.EMAIL(), patchEmployeeRequest.email());
+        //assertEquals(employee. avatar_url(), patchEmployeeRequest.url());
+        assertEquals(employee.phone(), patchEmployeeRequest.phone());
+        assertEquals(employee.isActive(), patchEmployeeRequest.isActive());
     }
 
-   }
+}

@@ -56,8 +56,8 @@ public class GetTasksDemo {
         // 2269 -> 2
         // Jackson -> Task[]
         String json = """
-                [{"id":2268,"title":"1","completed":null},{"id":2269,"title":"2","completed":null},{"id":2270,"title":"3","completed":null}]
-                """;
+            [{"id":2268,"title":"1","completed":null},{"id":2269,"title":"2","completed":null},{"id":2270,"title":"3","completed":null}]
+            """;
 
         // Header[] headers = response.getHeaders("Content-Type");
         Header[] headers = response.getAllHeaders();

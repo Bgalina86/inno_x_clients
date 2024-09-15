@@ -22,12 +22,13 @@ public class CompanyContractTest {
     private static String username;
     private static String password;
     CompanyApiHelper helper;
+
     @BeforeEach
     public void setUpL() {
 
         helper = new CompanyApiHelper();
     }
-    
+
     @BeforeAll
     public static void setUp() {
         properties = new ConfProperties();
@@ -41,20 +42,21 @@ public class CompanyContractTest {
     public void iCanCreateNewCompany() {
         AuthResponse info = helper.auth(username, password);
 
-        CreateCompanyRequest createCompanyRequest = new CreateCompanyRequest("TecnaSchool", "Онлайн-курсы");
+        CreateCompanyRequest createCompanyRequest = new CreateCompanyRequest("TecnaSchool",
+            "Онлайн-курсы");
 
         RestAssured.given()
-                .basePath("company")
-                .body(createCompanyRequest)
-                .header("x-client-token", info.userToken())
-                .contentType(ContentType.JSON)
-                .when()
-                .post()
-                .then()
-                .assertThat()
-                .statusCode(201)
-                .and()
-                .body("id", is(greaterThan(0)));
+            .basePath("company")
+            .body(createCompanyRequest)
+            .header("x-client-token", info.userToken())
+            .contentType(ContentType.JSON)
+            .when()
+            .post()
+            .then()
+            .assertThat()
+            .statusCode(201)
+            .and()
+            .body("id", is(greaterThan(0)));
     }
 
     @Test
@@ -65,7 +67,8 @@ public class CompanyContractTest {
     @Test
     public void iCanDeleteCompany() {
 
-        CreateCompanyResponse response = (CreateCompanyResponse) helper.createCompany("TecnaSchool", "Онлайн-курсы");
+        CreateCompanyResponse response = (CreateCompanyResponse) helper.createCompany("TecnaSchool",
+            "Онлайн-курсы");
         Response r = helper.deleteCompany(response.id());
 
         r.then().statusCode(200);
