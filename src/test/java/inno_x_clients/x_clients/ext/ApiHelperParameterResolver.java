@@ -8,13 +8,16 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 
 
 public class ApiHelperParameterResolver implements ParameterResolver {
+
     @Override
-    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+    public boolean supportsParameter(ParameterContext parameterContext,
+        ExtensionContext extensionContext) throws ParameterResolutionException {
         return parameterContext.getParameter().getType().equals(CompanyApiHelper.class);
     }
 
     @Override
-    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+    public Object resolveParameter(ParameterContext parameterContext,
+        ExtensionContext extensionContext) throws ParameterResolutionException {
         return new CompanyApiHelper();
     }
 }

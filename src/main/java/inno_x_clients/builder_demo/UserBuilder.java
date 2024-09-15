@@ -1,6 +1,7 @@
 package inno_x_clients.builder_demo;
 
 public class UserBuilder {
+
     private static User futureUser;
 
 
@@ -12,17 +13,17 @@ public class UserBuilder {
         return new UserBuilder();
     }
 
-    public UserBuilder withLastName(String lastName){
+    public UserBuilder withLastName(String lastName) {
         futureUser.lastName = lastName;
         return this;
     }
 
-    public UserBuilder withAge(int age){
+    public UserBuilder withAge(int age) {
         futureUser.age = age;
         return this;
     }
 
-    public UserBuilder withEmail(String email){
+    public UserBuilder withEmail(String email) {
         futureUser.email = email;
         return this;
     }

@@ -1,6 +1,6 @@
 package inno_x_clients.constClass;
 
-import inno_x_clients.x_clients.model.PatchEmployeeReqest;
+import inno_x_clients.x_clients.model.PostEmployeeRequest;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
@@ -8,38 +8,41 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 
 
 public class AddNewUserCompany implements ArgumentsProvider {
+
     public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
-        PatchEmployeeReqest patchEmployeeReqest1 = new PatchEmployeeReqest("Kolay", "Ivanov",
+        PostEmployeeRequest postEmployeeRequest1 = new PostEmployeeRequest("Kolay", "Ivanov",
             "Ivanovich", 30, "ddbgfb@mail.com", "privet.ru", "+7987884555", "15.06.2000", true
         );
-        PatchEmployeeReqest patchEmployeeReqest2 = new PatchEmployeeReqest("", "Ivanov",
+        PostEmployeeRequest postEmployeeRequest2 = new PostEmployeeRequest("", "Ivanov",
             "Ivanovich", 30, "ddbgfb@mail.com", "privet.ru", "+7987884555", "15.06.2000", true
         );
-        PatchEmployeeReqest patchEmployeeReqest3 = new PatchEmployeeReqest("Kolay", "",
+        PostEmployeeRequest postEmployeeRequest3 = new PostEmployeeRequest("Kolay", "",
             "Ivanovich", 30, "ddbgfb@mail.com", "privet.ru", "+7987884555", "15.06.2000", true
         );
-        PatchEmployeeReqest patchEmployeeReqest4 = new PatchEmployeeReqest("Kolay", "Ivanov",
+        PostEmployeeRequest postEmployeeRequest4 = new PostEmployeeRequest("Kolay", "Ivanov",
             "", 30, "ddbgfb@mail.com", "privet.ru", "+7987884555", "15.06.2000", true
         );
-        PatchEmployeeReqest patchEmployeeReqest5 = new PatchEmployeeReqest("Kolay", "Ivanov",
+        PostEmployeeRequest postEmployeeRequest5 = new PostEmployeeRequest("Kolay", "Ivanov",
             "Ivanovich", 30, "", "privet.ru", "+7987884555", "15.06.2000", true
         );
-        PatchEmployeeReqest patchEmployeeReqest6 = new PatchEmployeeReqest("Kolay", "Ivanov",
+        PostEmployeeRequest postEmployeeRequest6 = new PostEmployeeRequest("Kolay", "Ivanov",
             "Ivanovich", 30, "ddbgfb@mail.com", "", "+7987884555", "15.06.2000", true
-        ); PatchEmployeeReqest patchEmployeeReqest7 = new PatchEmployeeReqest("Kolay", "Ivanov",
+        );
+        PostEmployeeRequest postEmployeeRequest7 = new PostEmployeeRequest("Kolay", "Ivanov",
             "Ivanovich", 30, "ddbgfb@mail.com", "privet.ru", "", "15.06.2000", true
-        ); PatchEmployeeReqest patchEmployeeReqest8 = new PatchEmployeeReqest("Kolay", "Ivanov",
+        );
+        PostEmployeeRequest postEmployeeRequest8 = new PostEmployeeRequest("Kolay", "Ivanov",
             "Ivanovich", 30, "ddbgfb@mail.com", "privet.ru", "+7987884555", "", true
         );
-             return Stream.of(
-            Arguments.of(patchEmployeeReqest1),
-                 Arguments.of(patchEmployeeReqest2),
-                 Arguments.of(patchEmployeeReqest3),
-                 Arguments.of(patchEmployeeReqest4),
-                 Arguments.of(patchEmployeeReqest5),
-                 Arguments.of(patchEmployeeReqest6),
-                 Arguments.of(patchEmployeeReqest7),
-                 Arguments.of(patchEmployeeReqest8));
+        return Stream.of(
+            Arguments.of(postEmployeeRequest1),
+            Arguments.of(postEmployeeRequest2),
+            Arguments.of(postEmployeeRequest3),
+            Arguments.of(postEmployeeRequest4),
+            Arguments.of(postEmployeeRequest5),
+            Arguments.of(postEmployeeRequest6),
+            Arguments.of(postEmployeeRequest7),
+            Arguments.of(postEmployeeRequest8));
     }
 
 }
