@@ -1,28 +1,41 @@
 package inno_x_clients.x_clients.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record Employee(int id, String firstName, String lastName, String middleName, int companyId,
-                       String EMAIL, String url, String phone,
-                       String birthdate, boolean isActive, String s, String s1) {
+public record Employee(int id,
+                       String firstName,
+                       String lastName,
+                       String middleName,
+                       int companyId,
+                       String email,
+                       @JsonProperty("url")
+                       @JsonAlias({"url", "avatar_url"}) String url,
+                       String phone,
+                       String birthdate,
+                       boolean isActive,
+                       @JsonIgnore String createDateTime,
+                       @JsonIgnore String lastChangedDateTime) {
 
 
     public Employee(int id, String firstName, String lastName, String middleName, int companyId,
-        String EMAIL, String url, String phone, String birthdate, boolean isActive,
-        String s, String s1) {
+        String email, String url, String phone, String birthdate, boolean isActive,
+        String createDateTime, String lastChangedDateTime) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.middleName = middleName;
         this.companyId = companyId;
-        this.EMAIL = EMAIL;
+        this.email = email;
         this.url = url;
         this.phone = phone;
         this.birthdate = birthdate;
         this.isActive = isActive;
-        this.s = null;
-        this.s1 = null;
+        this.createDateTime = null;
+        this.lastChangedDateTime = null;
 
     }
 
@@ -52,9 +65,8 @@ public record Employee(int id, String firstName, String lastName, String middleN
         return companyId;
     }
 
-    @Override
-    public String EMAIL() {
-        return EMAIL;
+    public String email() {
+        return email;
     }
 
     @Override

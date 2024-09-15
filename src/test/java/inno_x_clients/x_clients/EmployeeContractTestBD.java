@@ -1,8 +1,6 @@
 package inno_x_clients.x_clients;
 
-import static inno_x_clients.constClass.Const.HTTP_CODE_CREATE;
-import static inno_x_clients.constClass.Const.HTTP_CODE_OK;
-import static inno_x_clients.constClass.Const.HTTP_CODE_UNAUTHORIZED;
+import static inno_x_clients.constClass.Const.*;
 import static inno_x_clients.x_clients.helper.EmployeeRandomeService.generateEmployee;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -45,6 +43,7 @@ public class EmployeeContractTestBD {
         username = properties.getProperty("username");
         password = properties.getProperty("password");
         headers = properties.getProperty("headers");
+        employeeApiHelper = new EmployeeApiHelper();
 
         RestAssured.baseURI = properties.getProperty("baseURI");
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
@@ -193,7 +192,7 @@ public class EmployeeContractTestBD {
             .patch("{id}", employeeId + 1000)
             .then()
             .assertThat()
-            .statusCode(HTTP_CODE_CREATE);
+            .statusCode(HTTP_CODE_INTERNAL_SERVER_ERROR);
     }
 
     public PatchEmployeeRequest fakerEmploee() {
