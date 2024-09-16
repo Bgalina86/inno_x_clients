@@ -23,19 +23,19 @@ import org.junit.jupiter.api.Test;
 
 public class EmployeeContractTestBD {
 
-    private  ConfProperties properties;
+    private ConfProperties properties;
     EmployeeApiHelper employeeApiHelper;
-    private  String dbUsername;
-    private  String dbPassword;
-    private  String username;
-    private  String password;
-    private  String headers;
+    private String dbUsername;
+    private String dbPassword;
+    private String username;
+    private String password;
+    private String headers;
     private DatabaseService databaseService;
     private int companyId;
     private int employeeId;
 
     @BeforeEach
-    public  void setUp() throws SQLException, IOException {
+    public void setUp() throws SQLException, IOException {
 
         properties = new ConfProperties();
         dbUsername = properties.getProperty("dbUsername");
@@ -55,7 +55,7 @@ public class EmployeeContractTestBD {
     }
 
     @AfterEach
-    public  void tearDown() throws SQLException {
+    public void tearDown() throws SQLException {
         databaseService.closeConnection();
     }
 
@@ -107,7 +107,6 @@ public class EmployeeContractTestBD {
             .then()
             .statusCode(HTTP_CODE_OK)
             .header("Content-Type", headers);
-
     }
 
     @Test
@@ -161,9 +160,9 @@ public class EmployeeContractTestBD {
 
     @Test
     @Description("Проверяем, что можем изменить информацию о сотруднике")
-    public void iCanEditEmployee(){
+    public void iCanEditEmployee() {
         AuthResponse authResponse = employeeApiHelper.auth(username, password);
-        PatchEmployeeRequest patchEmployeeRequest = fakerEmploee();
+        PatchEmployeeRequest patchEmployeeRequest = fakerEmployee();
         given()
             .basePath("employee")
             .body(patchEmployeeRequest)
@@ -178,9 +177,9 @@ public class EmployeeContractTestBD {
 
     @Test
     @Description("Проверяем, что при отправке запросы на изменение несуществующего сотрудника получаем 500")
-    public void iCannotEditEmployee(){
+    public void iCannotEditEmployee() {
         AuthResponse authResponse = employeeApiHelper.auth(username, password);
-        PatchEmployeeRequest patchEmployeeRequest = fakerEmploee();
+        PatchEmployeeRequest patchEmployeeRequest = fakerEmployee();
 
         given()
             .basePath("employee")
@@ -195,13 +194,12 @@ public class EmployeeContractTestBD {
             .statusCode(HTTP_CODE_INTERNAL_SERVER_ERROR);
     }
 
-    public PatchEmployeeRequest fakerEmploee() {
+    public PatchEmployeeRequest fakerEmployee() {
         Faker faker = new Faker();
-       return new PatchEmployeeRequest(faker.name().lastName(),
-           faker.internet().emailAddress(),
-           faker.internet().url(),
-           faker.phoneNumber().phoneNumber(),
-           faker.bool().bool());
+        return new PatchEmployeeRequest(faker.name().lastName(),
+            faker.internet().emailAddress(),
+            faker.internet().url(),
+            faker.phoneNumber().phoneNumber(),
+            faker.bool().bool());
     }
-
 }

@@ -27,6 +27,7 @@ public class EmployeeContractTestRestAssurt {
     EmployeeApiHelper employeeApiHelper;
     private static String username;
     private static String password;
+    private static int companyId;
 
 
     @BeforeAll
@@ -35,6 +36,7 @@ public class EmployeeContractTestRestAssurt {
         RestAssured.baseURI = properties.getProperty("baseURI");
         username = properties.getProperty("username");
         password = properties.getProperty("password");
+        companyId = Integer.parseInt(properties.getProperty("companyId"));
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
     }
 
@@ -47,7 +49,7 @@ public class EmployeeContractTestRestAssurt {
     @DisplayName("Получение списка сотрудников для компании")
     public void getEmployeeCompany() {
 
-      employeeApiHelper.printGetEmployeeIsCompany(581);
+        employeeApiHelper.printGetEmployeeIsCompany(companyId);
 
     }
 
@@ -88,10 +90,9 @@ public class EmployeeContractTestRestAssurt {
         assertEquals(idRequest, idResponse);
     }
 
-    //
     @Test
-    @DisplayName("Редактируем запись о сотруднике")
-    public void iCanCreateEmplyee() {
+    @DisplayName("Редактируем запись о сотруднике. Поле Фамилия")
+    public void iCanCreateEmployeeLastName() {
         AuthResponse authResponse = employeeApiHelper.auth(username, password);
 
         int idReqest = given().basePath("employee")
@@ -105,7 +106,6 @@ public class EmployeeContractTestRestAssurt {
             .getInt("id");
 
         String lastNameRequest = employeeApiHelper.getEmployeeInfo(idReqest).lastName();
-        //меняем
         given().basePath("employee")
             .body(Validationbody.bodyCreate)
             .header("x-client-token", authResponse.userToken())
@@ -114,6 +114,60 @@ public class EmployeeContractTestRestAssurt {
             .patch("{id}", idReqest)
             .body().as(Employee.class).lastName();
         String lastNameResponse = employeeApiHelper.getEmployeeInfo(idReqest).lastName();
-        assertNotEquals(lastNameRequest, lastNameResponse);
+        assertNotEquals(lastNameRequest, lastNameResponse, "Редактируется поле Фамилия");
+    }
+
+    @Test
+    @DisplayName("Редактируем запись о сотруднике. Поле номер телефона")
+    public void iCanCreateEmployeePhone() {
+        AuthResponse authResponse = employeeApiHelper.auth(username, password);
+
+        int idReqest = given().basePath("employee")
+            .body(Validationbody.body)
+            .header("x-client-token", authResponse.userToken())
+            .contentType(ContentType.JSON)
+            .when()
+            .post()
+            .body()
+            .jsonPath()
+            .getInt("id");
+
+        String phoneRequest = employeeApiHelper.getEmployeeInfo(idReqest).phone();
+        given().basePath("employee")
+            .body(Validationbody.bodyCreate)
+            .header("x-client-token", authResponse.userToken())
+            .contentType(ContentType.JSON)
+            .when()
+            .patch("{id}", idReqest)
+            .body().as(Employee.class).phone();
+        String phoneResponse = employeeApiHelper.getEmployeeInfo(idReqest).phone();
+        assertNotEquals(phoneRequest, phoneResponse, "Не редактируется поле номер телефона");
+    }
+
+    @Test
+    @DisplayName("Редактируем запись о сотруднике. Поле номер телефона")
+    public void iCanCreateEmployeeEMAIL() {
+        AuthResponse authResponse = employeeApiHelper.auth(username, password);
+
+        int idReqest = given().basePath("employee")
+            .body(Validationbody.body)
+            .header("x-client-token", authResponse.userToken())
+            .contentType(ContentType.JSON)
+            .when()
+            .post()
+            .body()
+            .jsonPath()
+            .getInt("id");
+
+        String emailRequest = employeeApiHelper.getEmployeeInfo(idReqest).email();
+        given().basePath("employee")
+            .body(Validationbody.bodyCreate)
+            .header("x-client-token", authResponse.userToken())
+            .contentType(ContentType.JSON)
+            .when()
+            .patch("{id}", idReqest)
+            .body().as(Employee.class).email();
+        String emailResponse = employeeApiHelper.getEmployeeInfo(idReqest).email();
+        assertNotEquals(emailRequest, emailResponse, "Не редактируется поле email");
     }
 }

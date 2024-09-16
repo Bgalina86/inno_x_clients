@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 // Поставить над классом аннотацию @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record Company(int id, String name, String description, boolean isActive) {
-
 }
 
 

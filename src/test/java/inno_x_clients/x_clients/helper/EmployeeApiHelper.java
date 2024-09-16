@@ -2,6 +2,7 @@ package inno_x_clients.x_clients.helper;
 
 import static io.restassured.RestAssured.given;
 
+import inno_x_clients.constClass.Validationbody;
 import inno_x_clients.x_clients.model.*;
 import io.restassured.RestAssured;
 import io.restassured.common.mapper.TypeRef;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 
 
 public class EmployeeApiHelper {
+
     private static ConfProperties properties;
     private static String username;
     private static String password;
@@ -46,44 +48,35 @@ public class EmployeeApiHelper {
             .body().prettyPrint();
     }
 
-
-    public Object printGetEmployeeId(int id) {
+    public Employee postNewAddEmployee() {
+        AuthResponse authResponse = auth(properties.getProperty("username"),
+            properties.getProperty("password"));
+        PostEmployeeRequest postEmployeeRequest = Validationbody.body;
         return given().basePath("employee")
+            .body(postEmployeeRequest)
+            .header("x-client-token", authResponse.userToken())
+            .contentType(ContentType.JSON)
             .when()
-            .get("{id}", id)
-            .body().prettyPrint();
-
+            .post().body().as(Employee.class);
     }
 
     public CreateEmployeeResponse createEmployee(Employee employee) {
-        AuthResponse authResponse = auth(properties.getProperty("username"), properties.getProperty("password"));
+        AuthResponse authResponse = auth(properties.getProperty("username"),
+            properties.getProperty("password"));
         return given()
-                .basePath("employee")
-                .body(employee)
-                .header("x-client-token", authResponse.userToken())
-                .contentType(ContentType.JSON)
-                .when()
-                .post().body().as(CreateEmployeeResponse.class);
+            .basePath("employee")
+            .body(employee)
+            .header("x-client-token", authResponse.userToken())
+            .contentType(ContentType.JSON)
+            .when()
+            .post().body().as(CreateEmployeeResponse.class);
     }
-    public CreateEmployeeResponse createEmployeeId(Employee employee) {
-        AuthResponse authResponse = auth(username,password);
 
-        return given()
-                .basePath("employee")
-                .body(employee)
-                .header("x-client-token", authResponse.userToken())
-                .contentType(ContentType.JSON)
-                .when()
-                .post().body().as(CreateEmployeeResponse.class);
-    }
     public Employee getEmployeeInfo(int employeeId) {
-       return given()
+        return given()
             .basePath("employee")
             .when()
             .get("{Id}", employeeId).body().as(Employee.class);
-
-
-
     }
 
     public List<Employee> getListOfEmployee(int companyId) {
@@ -94,11 +87,11 @@ public class EmployeeApiHelper {
             .when()
             .get().body().as(new TypeRef<>() {
             });
-
     }
 
     public Employee editEmployee(int employeeId, PatchEmployeeRequest patchEmployeeRequest) {
-        AuthResponse authResponse = auth(properties.getProperty("username"), properties.getProperty("password"));
+        AuthResponse authResponse = auth(properties.getProperty("username"),
+            properties.getProperty("password"));
 
         return given()
             .basePath("employee")

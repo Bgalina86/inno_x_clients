@@ -18,7 +18,8 @@ public class CompanyRepositoryJDBC implements CompanyRepository {
     @Override
     public int createCompany(String name, String descr) throws SQLException {
         String SQL = "insert into company(\"name\", description) values (?, ?)";
-        PreparedStatement statement = connection.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement statement = connection.prepareStatement(SQL,
+            Statement.RETURN_GENERATED_KEYS);
 
         statement.setString(1, name);
         statement.setString(2, descr);
@@ -38,11 +39,10 @@ public class CompanyRepositoryJDBC implements CompanyRepository {
         result.next();
 
         return new CompanyDB(
-                result.getInt("id"),
-                result.getString("name"),
-                result.getString("description"),
-                result.getBoolean("is_active")
+            result.getInt("id"),
+            result.getString("name"),
+            result.getString("description"),
+            result.getBoolean("is_active")
         );
-
     }
 }

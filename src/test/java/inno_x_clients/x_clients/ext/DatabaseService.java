@@ -33,7 +33,7 @@ public class DatabaseService {
 
     public int getAnyCompanyID() throws SQLException {
 
-      String sqlQuery = SQL_GET_ANY_COMPANY_ID;
+        String sqlQuery = SQL_GET_ANY_COMPANY_ID;
 
         ResultSet resultSet = connection.createStatement().executeQuery(sqlQuery);
         resultSet.next();

@@ -70,7 +70,6 @@ public class CompanyApiHelper {
         String header = response.header("Content-Length");
         if (header != null && header.equals("0")) {
             return Optional.empty();
-
         }
 
         Company company = response.as(Company.class);

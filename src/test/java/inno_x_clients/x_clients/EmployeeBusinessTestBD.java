@@ -11,7 +11,6 @@ import inno_x_clients.x_clients.ext.DbProperties;
 import inno_x_clients.x_clients.helper.CompanyApiHelper;
 import inno_x_clients.x_clients.helper.ConfProperties;
 import inno_x_clients.x_clients.helper.EmployeeApiHelper;
-//import inno_x_clients.x_clients.model.CreateEmployeeResponse;
 import inno_x_clients.x_clients.model.Employee;
 import io.restassured.RestAssured;
 import java.io.IOException;
@@ -33,12 +32,11 @@ public class EmployeeBusinessTestBD {
     private int companyId;
     private int employeeId;
 
-    private  String username;
+    private String username;
     private String password;
-    private int id;
 
     @BeforeEach
-    public  void setUp() throws SQLException, IOException {
+    public void setUp() throws SQLException, IOException {
 
         RestAssured.baseURI = DbProperties.getProperties("baseURI");
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
@@ -63,15 +61,15 @@ public class EmployeeBusinessTestBD {
 
 
     @AfterEach
-    public  void tearDown() throws SQLException {
+    public void tearDown() throws SQLException {
         databaseService.deleteCompanyAndItsEmloyees(companyId);
         databaseService.closeConnection();
     }
 
 
     @Test
-    @Description("Могу создать нового пользователя")
-    public void ICanAddNewEmployee() throws SQLException, InterruptedException {
+    @Description("Могу создать нового пользователя.Имя записалось корректно")
+    public void ICanAddNewEmployeeFirstName() throws SQLException {
         Faker faker = new Faker();
         Employee employee = generateEmployee(faker, companyId);
 
@@ -81,12 +79,104 @@ public class EmployeeBusinessTestBD {
         resultSet.next();
         assertEquals(response.id(), resultSet.getInt(1));
         assertEquals(employee.firstName(), resultSet.getString(2));
+    }
+
+    @Test
+    @Description("Могу создать нового пользователя. Фамилия записалась корректно")
+    public void ICanAddNewEmployeeLastName() throws SQLException {
+        Faker faker = new Faker();
+        Employee employee = generateEmployee(faker, companyId);
+
+        CreateEmployeeResponse response = employeeApiHelper.createEmployee(employee);
+
+        ResultSet resultSet = databaseService.getEmployeeInfo(response.id());
+        resultSet.next();
+        assertEquals(response.id(), resultSet.getInt(1));
         assertEquals(employee.lastName(), resultSet.getString(3));
+    }
+
+    @Test
+    @Description("Могу создать нового пользователя. Отчество записалось корректно")
+    public void ICanAddNewEmployeeMiddleName() throws SQLException {
+        Faker faker = new Faker();
+        Employee employee = generateEmployee(faker, companyId);
+
+        CreateEmployeeResponse response = employeeApiHelper.createEmployee(employee);
+
+        ResultSet resultSet = databaseService.getEmployeeInfo(response.id());
+        resultSet.next();
+        assertEquals(response.id(), resultSet.getInt(1));
         assertEquals(employee.middleName(), resultSet.getString(4));
-        assertEquals(employee.email(), resultSet.getString(6));
-        assertEquals(employee.url(), resultSet.getString(7));
+    }
+
+    @Test
+    @Description("Могу создать нового пользователя. Email записан корректно")
+    public void ICanAddNewEmployeeEmail() throws SQLException {
+        Faker faker = new Faker();
+        Employee employee = generateEmployee(faker, companyId);
+
+        CreateEmployeeResponse response = employeeApiHelper.createEmployee(employee);
+
+        ResultSet resultSet = databaseService.getEmployeeInfo(response.id());
+        resultSet.next();
+        assertEquals(response.id(), resultSet.getInt(1));
+        assertEquals(employee.email(), resultSet.getString(6), "EMAIL не записался");
+    }
+
+    @Test
+    @Description("Могу создать нового пользователя. URL записан корректно")
+    public void ICanAddNewEmployeeUrl() throws SQLException {
+        Faker faker = new Faker();
+        Employee employee = generateEmployee(faker, companyId);
+
+        CreateEmployeeResponse response = employeeApiHelper.createEmployee(employee);
+
+        ResultSet resultSet = databaseService.getEmployeeInfo(response.id());
+        resultSet.next();
+        assertEquals(response.id(), resultSet.getInt(1));
+        assertEquals(employee.url(), resultSet.getString(7), "URL не записался");
+    }
+
+    @Test
+    @Description("Могу создать нового пользователя. Телефон записан корректно")
+    public void ICanAddNewEmployeePhone() throws SQLException {
+        Faker faker = new Faker();
+        Employee employee = generateEmployee(faker, companyId);
+
+        CreateEmployeeResponse response = employeeApiHelper.createEmployee(employee);
+
+        ResultSet resultSet = databaseService.getEmployeeInfo(response.id());
+        resultSet.next();
+        assertEquals(response.id(), resultSet.getInt(1));
         assertEquals(employee.phone(), resultSet.getString(8));
-        assertEquals(employee.birthdate().toString(), resultSet.getDate(9).toString());
+
+    }
+
+    @Test
+    @Description("Могу создать нового пользователя. День рождения записан корректно")
+    public void ICanAddNewEmployeeBirthdate() throws SQLException {
+        Faker faker = new Faker();
+        Employee employee = generateEmployee(faker, companyId);
+
+        CreateEmployeeResponse response = employeeApiHelper.createEmployee(employee);
+
+        ResultSet resultSet = databaseService.getEmployeeInfo(response.id());
+        resultSet.next();
+        assertEquals(response.id(), resultSet.getInt(1));
+        assertEquals(employee.birthdate(), resultSet.getDate(9).toString());
+    }
+
+    @Test
+    @Description("Могу создать нового пользователя. IsActive записан корректно")
+    public void ICanAddNewEmployeeIsActive() throws SQLException {
+        Faker faker = new Faker();
+        Employee employee = generateEmployee(faker, companyId);
+
+        CreateEmployeeResponse response = employeeApiHelper.createEmployee(employee);
+
+        ResultSet resultSet = databaseService.getEmployeeInfo(response.id());
+        resultSet.next();
+        assertEquals(response.id(), resultSet.getInt(1));
         assertEquals(employee.isActive(), resultSet.getBoolean(10));
     }
 
@@ -109,23 +199,58 @@ public class EmployeeBusinessTestBD {
 
 
     @Test
-    @Description("Могу редактировать пользователя")
-    public void ICanEditEmployee() throws IOException {
-        Faker faker = new Faker();
-
-        PatchEmployeeRequest patchEmployeeRequest = new PatchEmployeeRequest
-                (faker.name().lastName(),
-                        faker.internet().emailAddress(),
-                        faker.internet().url(),
-                        faker.phoneNumber().phoneNumber(),
-                        faker.bool().bool());
+    @Description("Могу изменить у пользователя активность")
+    public void ICanEditEmployeeIsActive() {
+        PatchEmployeeRequest patchEmployeeRequest = fakerEmployee();
 
         Employee employee = employeeApiHelper.editEmployee(employeeId, patchEmployeeRequest);
-        assertEquals(employee.isActive(),patchEmployeeRequest.isActive());
-        assertEquals(employee.lastName(),patchEmployeeRequest.lastName());
-        assertEquals(employee.email(),patchEmployeeRequest.email());
-        assertEquals(employee.url(),patchEmployeeRequest.url());
-        assertEquals(employee.phone(),patchEmployeeRequest.phone());
-        assertEquals(employee.isActive(),patchEmployeeRequest.isActive());
+        assertEquals(employee.isActive(), patchEmployeeRequest.isActive());
+    }
+
+    @Test
+    @Description("Могу отредактировать у пользователя Фамилию")
+    public void ICanEditEmployeeLastName() {
+        PatchEmployeeRequest patchEmployeeRequest = fakerEmployee();
+
+        Employee employee = employeeApiHelper.editEmployee(employeeId, patchEmployeeRequest);
+        assertEquals(employee.lastName(), patchEmployeeRequest.lastName(),
+            "Не получается отредактировать поле Фамилия");
+    }
+
+    @Test
+    @Description("Могу отредактировать у пользователя EMAIL")
+    public void ICanEditEmployeeEmail() {
+        PatchEmployeeRequest patchEmployeeRequest = fakerEmployee();
+
+        Employee employee = employeeApiHelper.editEmployee(employeeId, patchEmployeeRequest);
+        assertEquals(employee.email(), patchEmployeeRequest.email());
+    }
+
+    @Test
+    @Description("Могу отредактировать у пользователя URL")
+    public void ICanEditEmployeeURL() {
+        PatchEmployeeRequest patchEmployeeRequest = fakerEmployee();
+
+        Employee employee = employeeApiHelper.editEmployee(employeeId, patchEmployeeRequest);
+        assertEquals(employee.url(), patchEmployeeRequest.url());
+    }
+
+    @Test
+    @Description("Могу отредактировать у пользователя номер телефона")
+    public void ICanEditEmployeePhone() {
+        PatchEmployeeRequest patchEmployeeRequest = fakerEmployee();
+
+        Employee employee = employeeApiHelper.editEmployee(employeeId, patchEmployeeRequest);
+        assertEquals(employee.phone(), patchEmployeeRequest.phone(),
+            "Не получается отредактировать поле номер телефона");
+    }
+
+    public PatchEmployeeRequest fakerEmployee() {
+        Faker faker = new Faker();
+        return new PatchEmployeeRequest(faker.name().lastName(),
+            faker.internet().emailAddress(),
+            faker.internet().url(),
+            faker.phoneNumber().phoneNumber(),
+            faker.bool().bool());
     }
 }
