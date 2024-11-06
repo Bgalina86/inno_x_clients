@@ -7,12 +7,28 @@ import inno_x_clients.x_clients.model.AuthResponse;
 import inno_x_clients.x_clients.model.Company;
 import inno_x_clients.x_clients.model.CreateCompanyRequest;
 import inno_x_clients.x_clients.model.CreateCompanyResponse;
+import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import java.util.Optional;
 
 
 public class CompanyApiHelper {
+    private static ConfProperties properties;
+    private String username;
+   private String password;
+    CompanyApiHelper helper;
+
+    public void setUp() {
+        properties = new ConfProperties();
+        RestAssured.baseURI = properties.getProperty("baseURI");
+       username = properties.getProperty("username");
+       password = properties.getProperty("password");
+    }
+    public void setUpL() {
+
+        helper = new CompanyApiHelper();
+    }
 
     public AuthResponse auth(String username, String password) {
         AuthRequest authRequest = new AuthRequest(username, password);
@@ -35,7 +51,7 @@ public class CompanyApiHelper {
     }
 
     public Object createCompany(String name, String descr) {
-        AuthResponse info = auth("leonardo", "leads");
+        AuthResponse info = auth(username, password);
 
         CreateCompanyRequest createCompanyRequest = new CreateCompanyRequest(name, descr);
 
@@ -49,7 +65,7 @@ public class CompanyApiHelper {
     }
 
     public Response deleteCompany(int id) {
-        AuthResponse info = auth("leonardo", "leads");
+        AuthResponse info = auth(username, password);
 
         return given()
             .basePath("company/delete")
@@ -75,5 +91,20 @@ public class CompanyApiHelper {
         Company company = response.as(Company.class);
         return Optional.of(company);
     }
+    public int getCompanyIdNewCompany(){
+        AuthResponse info = helper.auth(username, password);
 
+        CreateCompanyRequest createCompanyRequest = new CreateCompanyRequest("TecnaSchool",
+            "Онлайн-курсы");
+        int companyId = RestAssured.given()
+            .basePath("company")
+            .body(createCompanyRequest)
+            .header("x-client-token", info.userToken())
+            .contentType(ContentType.JSON)
+            .when()
+            .post()
+            .then().extract().response().jsonPath().getInt("id");
+        System.out.println(companyId);
+        return companyId;
+    }
 }

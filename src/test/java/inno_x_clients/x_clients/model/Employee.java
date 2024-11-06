@@ -62,6 +62,7 @@ public record Employee(int id,
 
     @Override
     public int companyId() {
+      //  Company company = new Company(0,"Онлайн университет","Обучение IT-професиям",true);
         return companyId;
     }
 

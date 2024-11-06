@@ -241,7 +241,7 @@ public class EmployeeBusinessTestBD {
         PatchEmployeeRequest patchEmployeeRequest = fakerEmployee();
 
         Employee employee = employeeApiHelper.editEmployee(employeeId, patchEmployeeRequest);
-        assertEquals(employee.phone(), patchEmployeeRequest.phone(),
+        assertEquals(patchEmployeeRequest.phone(), employee.phone(),
             "Не получается отредактировать поле номер телефона");
     }
 

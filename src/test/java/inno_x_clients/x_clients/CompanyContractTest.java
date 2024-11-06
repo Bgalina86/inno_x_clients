@@ -1,5 +1,6 @@
 package inno_x_clients.x_clients;
 
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 
@@ -33,8 +34,8 @@ public class CompanyContractTest {
     public static void setUp() {
         properties = new ConfProperties();
         RestAssured.baseURI = properties.getProperty("baseURI");
-        username = properties.getProperty("username");
-        password = properties.getProperty("password");
+       username = properties.getProperty("username");
+       password = properties.getProperty("password");
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
     }
 
@@ -45,7 +46,7 @@ public class CompanyContractTest {
         CreateCompanyRequest createCompanyRequest = new CreateCompanyRequest("TecnaSchool",
             "Онлайн-курсы");
 
-        RestAssured.given()
+        given()
             .basePath("company")
             .body(createCompanyRequest)
             .header("x-client-token", info.userToken())
@@ -72,5 +73,21 @@ public class CompanyContractTest {
         Response r = helper.deleteCompany(response.id());
 
         r.then().statusCode(200);
+    }
+    @Test
+    public void getCompanyIdNewCompany(){
+        AuthResponse info = helper.auth(username, password);
+
+        CreateCompanyRequest createCompanyRequest = new CreateCompanyRequest("TecnaSchool",
+            "Онлайн-курсы");
+        int companyId = RestAssured.given()
+            .basePath("company")
+            .body(createCompanyRequest)
+            .header("x-client-token", info.userToken())
+            .contentType(ContentType.JSON)
+            .when()
+            .post()
+            .then().extract().response().jsonPath().getInt("id");
+     System.out.println(companyId);
     }
 }

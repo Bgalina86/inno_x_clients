@@ -76,7 +76,7 @@ public class EmployeeApiHelper {
         return given()
             .basePath("employee")
             .when()
-            .get("{Id}", employeeId).body().as(Employee.class);
+            .get("{Id}", employeeId).body().<Employee>as(Employee.class);
     }
 
     public List<Employee> getListOfEmployee(int companyId) {
